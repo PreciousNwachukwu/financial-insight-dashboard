@@ -1,73 +1,80 @@
-# Financial Intelligence Dashboard  
-**SQL + Excel Case Study for Small Business Profitability Analysis**
+# Financial Intelligence Dashboard
+**SQL + Excel · Small Business Profitability Analysis**
 
-**Short Description:**  
-A data-driven financial analysis project designed to help small business founders understand their **true profitability**, not just revenue. Using **SQL for data transformation** and **Excel for dashboard modelling**, this solution reveals hidden financial trends, cost efficiency issues, and business-unit performance.
+> Built for founders who track revenue but not profit. This dashboard revealed that **Malvin Adire Stores was 52.9% more margin-efficient than Skincare Studio** despite generating lower revenue, a finding that completely reframes how a founder should prioritise growth, pricing, and cost control.
 
----
-
-## Table of Contents 
-1. [Project Overview](#project-overview)  
-2. [Problem Statement](#problem-statement)  
-3. [Dataset Summary](#dataset-summary)  
-4. [Key SQL Queries](#key-sql-queries-short-versions)  
-5. [Dashboard Features](#dashboard-features)  
-6. [Dashboard Preview](#dashboard-preview)  
-7. [Key Insights](#key-insights-summary)  
-8. [Tools Used](#tools-used)  
-9. [Skills Demonstrated](#skills-demonstrated)  
-10. [Business Impact](#business-impact)
-11. [Conclusion](#conclusion) 
-12. [Project Structure](#project-structure-repo-layout)  
-13. [How to Use the Project](#how-to-use-the-project)
+📊 [View Dashboard Screenshot](#dashboard-preview) · 📄 [Download Full Case Study PDF](https://github.com/PreciousNwachukwu/financial-intelligence-dashboard/blob/main/Financial_Intelligence_Dashboard_Case_Study.pdf) · 🗂 [View SQL Queries](./sql/financial_queries.sql)
 
 ---
 
-## Project Overview
-Small business founders often track **revenue**, but not **profit margin**, **cost efficiency**, or **expense structure**.  
-This dashboard analyzes 6 months of operational data (May–Oct 2025) for two businesses:
+## Dashboard Preview
 
-- **Malvin Adire Stores**  
-- **Skincare Studio**
-
-The result is a **decision-support tool** that uncovers profitability drivers and operational inefficiencies.
+![Financial Intelligence Dashboard](https://raw.githubusercontent.com/PreciousNwachukwu/financial-intelligence-dashboard/b65ae8256c1e921cda5f3d21ad44aeff75212bb8/dashboard.png)
 
 ---
 
-## Problem Statement
-Founders frequently misjudge profitability because they:
+## The Business Problem
 
-- Focus on sales instead of margins  
-- Ignore cost-to-income ratio  
-- Lack financial reporting structure  
-- Do not compare business units efficiently  
+Small business founders routinely mistake high revenue for high profitability. This project addresses three blind spots that cost founders money every month:
 
-This project addresses these blind spots with analytics.
+- Tracking sales without tracking margins
+- Ignoring which expense categories eat the most profit
+- Having no structured way to compare performance across business units or time periods
 
----
-
-## Dataset Summary
-Custom-built, realistic dataset covering **May–October 2025**:
-
-| Column           | Description                          |
-|------------------|--------------------------------------|
-| Date             | Monthly transaction date             |
-| Business_Name    | Adire Stores / Skincare Studio       |
-| Income           | Monthly revenue                      |
-| Expense          | Monthly operating cost               |
-| Expense_Category | Marketing, Rent, Logistics, Staff    |
-| Net_Profit       | Income - Expense                     |
-| Channel          | Online / Offline                     |
-
-Dataset includes natural fluctuations for meaningful insights.
+Without this visibility, a founder can be growing revenue while quietly shrinking profit and not know it until it's a crisis.
 
 ---
 
-## Key SQL Queries (Short Versions)
-SQL was used to perform data cleaning, aggregation, business performance analysis, and financial calculations.  
-Below are the **Top 5 queries** included in the README.  
-The *full SQL script* is stored in:  [View financial_queries.sql](./sql/financial_queries.sql)
+## What This Dashboard Does
 
+Covers **6 months of operational data (May–October 2025)** across two businesses:
+
+- **Malvin Adire Stores** — fashion/textile retail
+- **Skincare Studio** — beauty and skincare products
+
+It answers five questions every founder should be asking every month:
+
+1. Which business unit is actually more profitable, not just busier?
+2. What does my cost-to-income ratio look like by expense category?
+3. Which months are my strongest, and why?
+4. Is my profit growing or shrinking month-over-month?
+5. What happens to my margins if costs rise or revenue drops?
+
+---
+
+## Key Results
+
+| Metric | Finding |
+|---|---|
+| Highest Revenue | Skincare Studio — $372K over 6 months |
+| Highest Profit | Malvin Adire Stores — $184K over 6 months |
+| Best Profit Margin | Malvin Adire Stores — **52.9%** |
+| Worst Cost Burden | Skincare Studio — $212K in expenses vs $164K for Adire |
+| Best Single Month | May — $99K revenue, $47K profit |
+
+**The key insight:** Skincare Studio generates more revenue but loses more of it to operating costs. A founder chasing Skincare Studio's revenue numbers without fixing its cost structure is running in the wrong direction.
+
+---
+
+## Dataset
+
+Custom-built, realistic dataset designed to reflect natural business fluctuations:
+
+| Column | Description |
+|---|---|
+| Date | Monthly transaction date (May–Oct 2025) |
+| Business_Name | Malvin Adire Stores / Skincare Studio |
+| Income | Monthly revenue |
+| Expense | Monthly operating cost |
+| Expense_Category | Marketing · Rent · Logistics · Staff |
+| Net_Profit | Income minus Expense |
+| Channel | Online / Offline |
+
+---
+
+## SQL Analysis
+
+All queries were written in **SQL Server**. Five analytical layers were built:
 
 ### 1. Monthly Revenue, Expense & Profit
 ```sql
@@ -82,7 +89,7 @@ GROUP BY FORMAT(Date, 'yyyy-MM'), Business_Name
 ORDER BY Month, Business_Name;
 ```
 
-### 2. Highest Profit Month & Best Profit Margin
+### 2. Best Profit Month & Highest Margin
 ```sql
 SELECT TOP 1
     FORMAT(Date, 'yyyy-MM') AS Month,
@@ -94,19 +101,7 @@ GROUP BY FORMAT(Date, 'yyyy-MM'), Business_Name
 ORDER BY TotalProfit DESC;
 ```
 
-### 3. Trend Analysis – Month-by-Month Revenue & Profit
-```sql
-SELECT
-    FORMAT(Date, 'yyyy-MM') AS Month,
-    Business_Name,
-    SUM(Income) AS TotalRevenue,
-    SUM(Net_Profit) AS TotalProfit
-FROM financial_insight_data
-GROUP BY FORMAT(Date, 'yyyy-MM'), Business_Name
-ORDER BY Month, Business_Name;
-```
-
-### 4. Month-over-Month Profit Change (MoM)
+### 3. Month-over-Month Profit Change (Window Function)
 ```sql
 WITH MonthlyProfit AS (
     SELECT
@@ -124,7 +119,7 @@ SELECT
 FROM MonthlyProfit;
 ```
 
-### 5. Expense Breakdown by Category
+### 4. Expense Breakdown by Category
 ```sql
 SELECT
     Business_Name,
@@ -134,83 +129,67 @@ FROM financial_insight_data
 GROUP BY Business_Name, Expense_Category
 ORDER BY Business_Name, Total_Expense DESC;
 ```
----
 
-## Dashboard Features
-Excel dashboard includes:
+### 5. Cost-to-Income Ratio by Category
+```sql
+SELECT
+    Business_Name,
+    Expense_Category,
+    SUM(Expense) AS TotalExpense,
+    SUM(Income) AS TotalRevenue,
+    ROUND(SUM(Expense) * 100.0 / SUM(Income), 2) AS ExpenseToRevenuePercent
+FROM financial_insight_data
+GROUP BY Business_Name, Expense_Category
+ORDER BY Business_Name, ExpenseToRevenuePercent DESC;
+```
 
-- **KPI Cards:** Revenue, Expense, Profit, Profit Margin  
-- **Trend Charts:** Revenue vs Expense, Monthly Profit  
-- **Business Comparison:** Profitability, Revenue vs Cost  
-- **Expense Breakdown:** Category-level analysis  
-- **Scenario Simulator:**  
-  - +10% expense increase  
-  - –20% logistics cost  
-  - +15% revenue growth  
-
-Designed for **founder-friendly consulting insights**.
-
----
-
-## Dashboard Preview
-![Dashboard Preview](https://raw.githubusercontent.com/PreciousNwachukwu/financial-intelligence-dashboard/b65ae8256c1e921cda5f3d21ad44aeff75212bb8/dashboard.png)
+[📄 View full SQL script →](./sql/financial_queries.sql)
 
 ---
 
-## Key Insights (Summary)
-- **Highest Revenue:** Skincare Studio – $372K  
-- **Highest Profit:** Malvin Adire Stores – $184K  
-- **Most Efficient (Margin):** Malvin Adire Stores – 52.9%  
-- **Best Month:** May (Revenue: $99K, Profit: $47K)  
+## Excel Dashboard Features
 
-**Additional Insight:**  
-Skincare Studio incurs higher operating costs ($212K vs $164K), compressing margins.
+| Feature | Description |
+|---|---|
+| KPI Cards | Revenue · Expense · Profit · Profit Margin |
+| Trend Charts | Revenue vs Expense · Monthly Profit over time |
+| Business Comparison | Side-by-side profitability and cost efficiency |
+| Expense Breakdown | Category-level cost analysis per business unit |
+| Scenario Simulator | +10% expense · –20% logistics · +15% revenue growth |
 
-**Long Report:**  
-[Download Full Case Study (PDF)](https://github.com/PreciousNwachukwu/financial-intelligence-dashboard/blob/main/Financial_Intelligence_Dashboard_Case_Study.pdf)
+---
+
+## Strategic Recommendations
+
+Based on this analysis, here is what the data actually recommends:
+
+**For Malvin Adire Stores:** Protect and expand the margin. The 52.9% margin is exceptional for a product-based business. The priority is not chasing more revenue; it is scaling the product mix that sustains this margin while keeping operating costs flat.
+
+**For Skincare Studio:** The problem is not revenue, it is cost structure. With $212K in operating expenses against $372K revenue, every growth decision must be tested against its margin impact first. The immediate action is auditing the Logistics and Marketing categories, which are the most compressible without touching revenue.
+
+**For both businesses:** The May performance ($99K revenue, $47K profit) suggests a seasonal or promotional pattern worth replicating. Understanding what drove May and building it into Q1 planning, is worth more than any cost-cutting exercise.
 
 ---
 
 ## Tools Used
-- **SQL** — Transformation & financial metrics  
-- **Excel** — Dashboard modeling & scenario analysis  
+
+- **SQL Server** — Data transformation, aggregation, window functions
+- **Microsoft Excel** — Dashboard modelling, scenario analysis, KPI visualisation
 
 ---
 
 ## Skills Demonstrated
-- Advanced SQL querying  
-- Excel dashboard design  
-- Scenario modeling  
-- Financial storytelling  
-- Data validation & cleaning  
-- Business analytics  
+
+- Advanced SQL: CTEs, window functions (LAG), subqueries, aggregations
+- Financial analytics and profitability modelling
+- Excel dashboard design with scenario simulation
+- Business storytelling, translating data findings into founder-ready recommendations
+- Dataset design and data validation
 
 ---
 
-## Business Impact
-This dashboard helps founders:
+## Project Structure
 
-- Identify which business drives the most profit  
-- Optimize expense allocation & reduce waste  
-- Improve pricing strategies  
-- Conduct monthly performance reviews  
-- Predict margins using what-if analysis  
-
----
-
-## Conclusion
-This project demonstrates how small businesses can move beyond surface-level revenue tracking to make **profit-focused, data-driven decisions**.
-
-By combining SQL-based financial analysis with an interactive Excel dashboard, the solution provides founders with:
-- Clear visibility into profitability drivers
-- Actionable cost control insights
-- A repeatable framework for monthly financial reviews
-
-The Financial Intelligence Dashboard mirrors real-world consulting workflows and highlights my ability to translate raw financial data into strategic business insights.
-
----
-
-## Project Structure (Repo Layout)
 ```
 financial-intelligence-dashboard/
 ├── README.md
@@ -226,10 +205,13 @@ financial-intelligence-dashboard/
 
 ---
 
-## How to Use the Project
-1. Review the README for business context and insights.
-2. Download the Excel dashboard to explore KPIs and scenario simulations.
-3. Open the SQL file to review financial analysis logic.
-4. Read the full case study PDF for detailed explanations and visuals.
+## How to Use
 
+1. Read this README for business context and key findings
+2. Open `financial_dashboard.xlsx` to explore KPIs and run scenario simulations
+3. Review `financial_queries.sql` to see the full analytical logic
+4. Download the case study PDF for a detailed walkthrough with visuals
 
+---
+
+*Built by [Precious Nwachukwu](https://www.linkedin.com/in/precious-nwachukwu-873b432b7/) · Data Analyst · Abuja, Nigeria*
